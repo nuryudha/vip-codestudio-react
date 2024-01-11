@@ -2,8 +2,14 @@ import Button from "../Elements/Button";
 import InputForm from "../Elements/Input";
 
 function FormLogin(props) {
+  function handleLogin(event) {
+    event.preventDefault();
+    localStorage.setItem("email", event.target.email.value);
+    localStorage.setItem("password", event.target.password.value);
+    window.location.href = "/products";
+  }
   return (
-    <form action="">
+    <form onSubmit={handleLogin}>
       <InputForm
         label="Email"
         type="email"
@@ -16,7 +22,9 @@ function FormLogin(props) {
         placeholder="***"
         name="password"
       />
-      <Button classname="bg-blue-600 w-full">Login</Button>
+      <Button classname="bg-blue-600 w-full" type="submit">
+        Login
+      </Button>
     </form>
   );
 }
