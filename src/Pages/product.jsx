@@ -33,6 +33,10 @@ const products = [
 const email = localStorage.getItem("email");
 
 function ProductPage(props) {
+
+  const [cart, setCart]
+
+
   function handleLogout() {
     localStorage.removeItem("email");
     localStorage.removeItem("password");
@@ -48,18 +52,20 @@ function ProductPage(props) {
         </Button>
       </div>
       <div className="flex justify-center py-5">
-        {products.map((product) => (
-          <CardProduct key={product.id}>
-            <CardProduct.Header image={product.image} />
-            <CardProduct.Body title={product.name}>
-              {product.description}
-            </CardProduct.Body>
-            <CardProduct.Footer price={product.price} />
-          </CardProduct>
-        ))}
-      </div>
-      <div className="flex">
-        <Counter></Counter>
+        <div className="w-3/4 flex flex-wrap">
+          {products.map((product) => (
+            <CardProduct key={product.id}>
+              <CardProduct.Header image={product.image} />
+              <CardProduct.Body title={product.name}>
+                {product.description}
+              </CardProduct.Body>
+              <CardProduct.Footer price={product.price} />
+            </CardProduct>
+          ))}
+        </div>
+        <div className="w-1/4">
+          <h1 className="text-3xl font-bold">Cart</h1>
+        </div>
       </div>
     </Fragment>
   );
