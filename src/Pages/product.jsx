@@ -5,25 +5,17 @@ import CardProduct from '../components/Fragments/CardProduct';
 import Counter from '../components/Fragments/Counter';
 import { getProduct } from '../services/product.service';
 import { getUsername } from '../services/auth.service';
+import { useLogin } from '../hooks/useLogin';
 
 function ProductPage(props) {
   const [cart, setCart] = useState([]); // disini parameter item
   const [totalPrice, setTotalPrice] = useState(0);
   const [products, setProducts] = useState([]);
-  const [username, setUsername] = useState('');
+  const username = useLogin();
 
   useEffect(() => {
     setCart(JSON.parse(localStorage.getItem('cart')) || []);
   }, []); // kalau kosong depedencynya jadi DIDMOUNT
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      setUsername(getUsername(token));
-    } else {
-      window.location.href = '/login';
-    }
-  }, []);
 
   useEffect(() => {
     getProduct((data) => {
