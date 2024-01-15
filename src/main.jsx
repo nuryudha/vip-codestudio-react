@@ -2,6 +2,7 @@ import './index.css';
 
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
+import DetailProductPage from './Pages/detailProduct';
 import ErrorPage from './Pages/404';
 import LoginPage from './Pages/login';
 import ProductPage from './Pages/product';
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
   {
     path: '/profile',
     element: <ProfilePage />,
+  },
+  {
+    path: '/product/:id',
+    element: <DetailProductPage />,
   },
 ]);
 
