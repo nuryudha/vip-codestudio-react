@@ -3,48 +3,28 @@ import { Fragment, useEffect, useRef, useState } from 'react';
 import Button from '../components/Elements/Button';
 import CardProduct from '../components/Fragments/CardProduct';
 import Counter from '../components/Fragments/Counter';
-
-const products = [
-  {
-    id: 1,
-    name: 'Sepatu Baru',
-    price: 1000000,
-    image: '/images/shoes-1.jpg',
-    description: `Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sunt nam
-    impedit labore magnam inventore veniam praesentium voluptatem facere
-    cumque eveniet? Aspernatur eaque incidunt provident officia deleniti!
-    Quasi qui nobis sed!`,
-  },
-  {
-    id: 2,
-    name: 'Sepatu Lama',
-    price: 500000,
-    image: '/images/shoes-1.jpg',
-    description: `Lorem ipsum dolor, sit amet consectetur adipisicing elit.`,
-  },
-  {
-    id: 3,
-    name: 'Sepatu ',
-    price: 200000,
-    image: '/images/shoes-1.jpg',
-    description: `Lorem ipsum dolor, sit amet adipisicing elit.`,
-  },
-];
+import { getProduct } from '../services/product.service';
 
 const email = localStorage.getItem('email');
 
 function ProductPage(props) {
   const [cart, setCart] = useState([]); // disini parameter item
   const [totalPrice, setTotalPrice] = useState(0);
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    // didmount
     setCart(JSON.parse(localStorage.getItem('cart')) || []);
   }, []); // kalau kosong depedencynya jadi DIDMOUNT
 
   useEffect(() => {
-    // didupdate
-    if (cart.length > 0) {
+    getProduct((data) => {
+      console.log(data);
+      setProducts(data);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (products.length > 0 && cart.length > 0) {
       const sum = cart.reduce((acc, item) => {
         const product = products.find((product) => product.id === item.id);
         return acc + product.price * item.quantity;
@@ -52,7 +32,7 @@ function ProductPage(props) {
       setTotalPrice(sum);
       localStorage.setItem('cart', JSON.stringify(cart));
     }
-  }, [cart]); // perubahan apa yang akan kita pantau, jadi ketika cart berubah maka sya akan mengupdate total price
+  }, [cart, products]); // perubahan apa yang akan kita pantau, jadi ketika cart berubah maka sya akan mengupdate total price DIDUPDATE
 
   function handleLogout() {
     localStorage.removeItem('email');
@@ -96,13 +76,14 @@ function ProductPage(props) {
       </div>
       <div className="flex justify-center py-5">
         <div className="w-4/6 flex flex-wrap">
-          {products.map((product) => (
-            <CardProduct key={product.id}>
-              <CardProduct.Header image={product.image} />
-              <CardProduct.Body name={product.name}>{product.description}</CardProduct.Body>
-              <CardProduct.Footer price={product.price} id={product.id} handleAddToCart={handleAddToCart} />
-            </CardProduct>
-          ))}
+          {products.length > 0 &&
+            products.map((product) => (
+              <CardProduct key={product.id}>
+                <CardProduct.Header image={product.image} />
+                <CardProduct.Body name={product.title}>{product.description}</CardProduct.Body>
+                <CardProduct.Footer price={product.price} id={product.id} handleAddToCart={handleAddToCart} />
+              </CardProduct>
+            ))}
         </div>
         <div className="w-2/6">
           <h1 className="text-3xl font-bold text-blue-600 ml-5 mb-2">Cart</h1>
@@ -116,22 +97,23 @@ function ProductPage(props) {
               </tr>
             </thead>
             <tbody>
-              {cart.map((item) => {
-                const product = products.find((product) => product.id === item.id);
-                return (
-                  <tr key={item.id}>
-                    <td>{product.name}</td>
-                    <td>{product.price.toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
-                    <td>{item.quantity}</td>
-                    <td>{(item.quantity * product.price).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
-                  </tr>
-                );
-              })}
+              {products.length > 0 &&
+                cart.map((item) => {
+                  const product = products.find((product) => product.id === item.id);
+                  return (
+                    <tr key={item.id}>
+                      <td>{product.title.substring(0, 20)}...</td>
+                      <td>{product.price.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td>
+                      <td>{item.quantity}</td>
+                      <td>{(item.quantity * product.price).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td>
+                    </tr>
+                  );
+                })}
               <tr ref={totalPriceRef}>
                 <td colSpan={3} className="font-bold">
                   Total Price
                 </td>
-                <td className="font-bold"> {totalPrice.toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0 })} </td>
+                <td className="font-bold"> {totalPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td>
               </tr>
             </tbody>
           </table>
