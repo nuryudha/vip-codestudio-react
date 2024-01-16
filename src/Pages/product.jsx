@@ -1,11 +1,11 @@
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from "react";
 
-import Button from '../components/Elements/Button';
-import CardProduct from '../components/Fragments/CardProduct';
-import Counter from '../components/Fragments/Counter';
-import { getProduct } from '../services/product.service';
-import { getUsername } from '../services/auth.service';
-import { useLogin } from '../hooks/useLogin';
+import Button from "../components/Elements/Button";
+import CardProduct from "../components/Fragments/CardProduct";
+import Counter from "../components/Fragments/Counter";
+import { getProducts } from "../services/product.service";
+import { getUsername } from "../services/auth.service";
+import { useLogin } from "../hooks/useLogin";
 
 function ProductPage(props) {
   const [cart, setCart] = useState([]); // disini parameter item
@@ -14,11 +14,11 @@ function ProductPage(props) {
   const username = useLogin();
 
   useEffect(() => {
-    setCart(JSON.parse(localStorage.getItem('cart')) || []);
+    setCart(JSON.parse(localStorage.getItem("cart")) || []);
   }, []); // kalau kosong depedencynya jadi DIDMOUNT
 
   useEffect(() => {
-    getProduct((data) => {
+    getProducts((data) => {
       console.log(data);
       setProducts(data);
     });
@@ -31,38 +31,42 @@ function ProductPage(props) {
         return acc + product.price * item.quantity;
       }, 0);
       setTotalPrice(sum);
-      localStorage.setItem('cart', JSON.stringify(cart));
+      localStorage.setItem("cart", JSON.stringify(cart));
     }
   }, [cart, products]); // perubahan apa yang akan kita pantau, jadi ketika cart berubah maka sya akan mengupdate total price DIDUPDATE
 
   function handleLogout() {
-    localStorage.removeItem('token');
-    window.location.href = '/login';
+    localStorage.removeItem("token");
+    window.location.href = "/login";
   }
 
   function handleAddToCart(id) {
     if (cart.find((item) => item.id === id)) {
-      setCart(cart.map((item) => (item.id === id ? { ...item, quantity: item.quantity + 1 } : item)));
+      setCart(
+        cart.map((item) =>
+          item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+        )
+      );
     } else {
       setCart([...cart, { id, quantity: 1 }]);
     }
   }
 
   // USE REF
-  const cartRef = useRef(JSON.parse(localStorage.getItem('cart')) || []);
+  const cartRef = useRef(JSON.parse(localStorage.getItem("cart")) || []);
 
   function handleAddToCartRef(id) {
     cartRef.current = [...cartRef.current, { id, quantity: 1 }];
-    localStorage.setItem('cart', JSON.stringify(cartRef.current));
+    localStorage.setItem("cart", JSON.stringify(cartRef.current));
   }
 
   const totalPriceRef = useRef(null);
 
   useEffect(() => {
     if (cart.length > 0) {
-      totalPriceRef.current.style.display = 'table-row';
+      totalPriceRef.current.style.display = "table-row";
     } else {
-      totalPriceRef.current.style.display = 'none';
+      totalPriceRef.current.style.display = "none";
     }
   }, [cart]);
 
@@ -79,9 +83,15 @@ function ProductPage(props) {
           {products.length > 0 &&
             products.map((product) => (
               <CardProduct key={product.id}>
-                <CardProduct.Header image={product.image} />
-                <CardProduct.Body name={product.title}>{product.description}</CardProduct.Body>
-                <CardProduct.Footer price={product.price} id={product.id} handleAddToCart={handleAddToCart} />
+                <CardProduct.Header image={product.image} id={product.id} />
+                <CardProduct.Body name={product.title}>
+                  {product.description}
+                </CardProduct.Body>
+                <CardProduct.Footer
+                  price={product.price}
+                  id={product.id}
+                  handleAddToCart={handleAddToCart}
+                />
               </CardProduct>
             ))}
         </div>
@@ -99,13 +109,25 @@ function ProductPage(props) {
             <tbody>
               {products.length > 0 &&
                 cart.map((item) => {
-                  const product = products.find((product) => product.id === item.id);
+                  const product = products.find(
+                    (product) => product.id === item.id
+                  );
                   return (
                     <tr key={item.id}>
                       <td>{product.title.substring(0, 20)}...</td>
-                      <td>{product.price.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td>
+                      <td>
+                        {product.price.toLocaleString("en-US", {
+                          style: "currency",
+                          currency: "USD",
+                        })}
+                      </td>
                       <td>{item.quantity}</td>
-                      <td>{(item.quantity * product.price).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td>
+                      <td>
+                        {(item.quantity * product.price).toLocaleString(
+                          "en-US",
+                          { style: "currency", currency: "USD" }
+                        )}
+                      </td>
                     </tr>
                   );
                 })}
@@ -113,7 +135,13 @@ function ProductPage(props) {
                 <td colSpan={3} className="font-bold">
                   Total Price
                 </td>
-                <td className="font-bold"> {totalPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</td>
+                <td className="font-bold">
+                  {" "}
+                  {totalPrice.toLocaleString("en-US", {
+                    style: "currency",
+                    currency: "USD",
+                  })}
+                </td>
               </tr>
             </tbody>
           </table>
