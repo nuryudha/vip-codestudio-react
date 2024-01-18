@@ -1,14 +1,14 @@
-import cartReducer from './slices/cartSlice';
-import { configureStore } from '@reduxjs/toolkit';
+import cartReducer from "./slices/cartSlice";
+import { configureStore } from "@reduxjs/toolkit";
 
 const store = configureStore({
   reducer: { cart: cartReducer },
 });
 
-console.log('oncreate store', store.getState());
+console.log("oncreate store", store.getState());
 
 store.subscribe(() => {
-  'Store Change : ', store.getState();
+  console.log("STORE CHANGE:", store.getState());
 });
 
 export default store;

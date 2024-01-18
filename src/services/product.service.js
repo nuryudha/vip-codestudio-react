@@ -4,7 +4,6 @@ export function getProducts(callback) {
   axios
     .get("https://fakestoreapi.com/products")
     .then((res) => {
-      console.log(res);
       callback(res.data); // Pass the data to the callback function
     })
     .catch((err) => {
