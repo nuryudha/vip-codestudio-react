@@ -1,49 +1,51 @@
-import './index.css';
+import "./index.css";
 
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
-import DetailProductPage from './Pages/detailProduct';
-import ErrorPage from './Pages/404';
-import LoginPage from './Pages/login';
-import ProductPage from './Pages/product';
-import ProfilePage from './Pages/profile';
-import { Provider } from 'react-redux';
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import RegisterPage from './Pages/register';
-import store from './redux/store';
+import DetailProductPage from "./Pages/detailProduct";
+import ErrorPage from "./Pages/404";
+import LoginPage from "./Pages/login";
+import ProductPage from "./Pages/product";
+import ProfilePage from "./Pages/profile";
+import { Provider } from "react-redux";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import RegisterPage from "./Pages/register";
+import store from "./redux/store";
+import Navbar from "./components/Layouts/Navbar";
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <div>Hello World</div>,
     errorElement: <ErrorPage />,
   },
   {
-    path: '/login',
+    path: "/login",
     element: <LoginPage />,
   },
   {
-    path: '/register',
+    path: "/register",
     element: <RegisterPage />,
   },
   {
-    path: '/products',
+    path: "/products",
     element: <ProductPage />,
   },
   {
-    path: '/profile',
+    path: "/profile",
     element: <ProfilePage />,
   },
   {
-    path: '/product/:id',
+    path: "/product/:id",
     element: <DetailProductPage />,
   },
 ]);
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
+      <Navbar />
       <RouterProvider router={router} />
     </Provider>
   </React.StrictMode>

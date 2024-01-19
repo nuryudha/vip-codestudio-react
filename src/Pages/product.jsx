@@ -1,16 +1,16 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 
-import Button from "../components/Elements/Button";
 import CardProduct from "../components/Fragments/CardProduct";
-import Counter from "../components/Fragments/Counter";
+
 import { getProducts } from "../services/product.service";
-import { getUsername } from "../services/auth.service";
+
 import { useLogin } from "../hooks/useLogin";
 import TableCart from "../components/Fragments/TableCart";
+import Navbar from "../components/Layouts/Navbar";
 
 function ProductPage(props) {
   const [products, setProducts] = useState([]);
-  const username = useLogin();
+  useLogin();
 
   useEffect(() => {
     getProducts((data) => {
@@ -19,19 +19,8 @@ function ProductPage(props) {
     });
   }, []);
 
-  function handleLogout() {
-    localStorage.removeItem("token");
-    window.location.href = "/login";
-  }
-
   return (
     <Fragment>
-      <div className="flex justify-end h-20 bg-blue-600 text-white font-bold items-center px-10">
-        {username}
-        <Button classname="ml-5 bg-black" onClick={handleLogout}>
-          Logout
-        </Button>
-      </div>
       <div className="flex justify-center py-5">
         <div className="w-4/6 flex flex-wrap">
           {products.length > 0 &&
