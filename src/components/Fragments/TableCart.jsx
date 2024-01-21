@@ -1,12 +1,16 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
-import { DarkMode } from "../../context/DarkMode";
+import { useContext, useEffect, useRef, useState } from 'react';
+import { useTotalPrice, useTotalPriceDispatch } from '../../context/TotalPriceContext';
+
+import { DarkMode } from '../../context/DarkMode';
+import { useSelector } from 'react-redux';
 
 function TableCart(props) {
   const { products } = props;
   const cart = useSelector((state) => state.cart.data);
-  const [totalPrice, setTotalPrice] = useState(0);
+  // const [totalPrice, setTotalPrice] = useState(0);
   const { isDarkMode } = useContext(DarkMode);
+  const dispatch = useTotalPriceDispatch();
+  const { total } = useTotalPrice();
 
   useEffect(() => {
     if (products.length > 0 && cart.length > 0) {
@@ -14,8 +18,12 @@ function TableCart(props) {
         const product = products.find((product) => product.id === item.id);
         return acc + product.price * item.quantity;
       }, 0);
-      setTotalPrice(sum);
-      localStorage.setItem("cart", JSON.stringify(cart));
+      // setTotalPrice(sum);
+      dispatch({
+        type: 'UPDATE',
+        payload: sum,
+      });
+      localStorage.setItem('cart', JSON.stringify(cart));
     }
   }, [cart, products]); // perubahan apa yang akan kita pantau, jadi ketika cart berubah maka sya akan mengupdate total price DIDUPDATE
 
@@ -23,18 +31,14 @@ function TableCart(props) {
 
   useEffect(() => {
     if (cart.length > 0) {
-      totalPriceRef.current.style.display = "table-row";
+      totalPriceRef.current.style.display = 'table-row';
     } else {
-      totalPriceRef.current.style.display = "none";
+      totalPriceRef.current.style.display = 'none';
     }
   }, [cart]);
 
   return (
-    <table
-      className={`text-left table-auto border-separate border-spacing-x-5 ${
-        isDarkMode && "text-white"
-      }`}
-    >
+    <table className={`text-left table-auto border-separate border-spacing-x-5 ${isDarkMode && 'text-white'}`}>
       <thead>
         <tr>
           <th>Product</th>
@@ -51,16 +55,16 @@ function TableCart(props) {
               <tr key={item.id}>
                 <td>{product.title.substring(0, 20)}...</td>
                 <td>
-                  {product.price.toLocaleString("en-US", {
-                    style: "currency",
-                    currency: "USD",
+                  {product.price.toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
                   })}
                 </td>
                 <td>{item.quantity}</td>
                 <td>
-                  {(item.quantity * product.price).toLocaleString("en-US", {
-                    style: "currency",
-                    currency: "USD",
+                  {(item.quantity * product.price).toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
                   })}
                 </td>
               </tr>
@@ -71,10 +75,10 @@ function TableCart(props) {
             Total Price
           </td>
           <td className="font-bold">
-            {" "}
-            {totalPrice.toLocaleString("en-US", {
-              style: "currency",
-              currency: "USD",
+            {' '}
+            {total.toLocaleString('en-US', {
+              style: 'currency',
+              currency: 'USD',
             })}
           </td>
         </tr>
